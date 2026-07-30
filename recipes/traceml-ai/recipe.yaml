@@ -18,13 +18,19 @@ build:
   python:
     entry_points:
       - traceml = traceml_ai.launcher.cli:main
-  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  script:
+    # setuptools-scm derives the version from git; there is no repo in the
+    # sdist, so pin it explicitly rather than relying on the PKG-INFO fallback.
+    env:
+      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ version }}
+    content: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
     - python ${{ python_min }}.*
     - pip
     - setuptools
+    - setuptools_scm >=8
     - wheel
   run:
     - python >=${{ python_min }}
